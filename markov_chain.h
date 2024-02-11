@@ -12,8 +12,11 @@
 /***************************/
 /*   insert typedefs here  */
 /***************************/
-
-
+typedef void(*Print)(void*);
+typedef int(*Compare)(void*,void*);
+typedef void (*Free_Func)(void *);
+typedef void* (*Copy)(void *);
+typedef bool (*Last)(void *);
 /***************************/
 
 
@@ -21,13 +24,16 @@
 /***************************/
 /*        STRUCTS          */
 /***************************/
-
+struct NextNodeCounter;
 typedef struct MarkovNode {
-
+    void* data;
+    struct NextNodeCounter * next_node_counter;
+    int next_node_num;
 } MarkovNode;
 
 typedef struct NextNodeCounter {
-
+    MarkovNode *markov_node;
+    int count;
 } NextNodeCounter;
 
 /* DO NOT ADD or CHANGE variable names in this struct */
@@ -36,26 +42,26 @@ typedef struct MarkovChain {
 
     // pointer to a func that receives data from a generic type and prints it
     // returns void.
-    /* <fill_type> */ print_func;
+    Print print_func;
 
     // pointer to a func that gets 2 pointers of generic data type(same one) and compare between them */
     // returns: - a positive value if the first is bigger
     //          - a negative value if the second is bigger
     //          - 0 if equal
-    /* <fill_type> */ comp_func;
+    Compare comp_func;
 
     // a pointer to a function that gets a pointer of generic data type and frees it.
     // returns void.
-    /*<fill_type>*/ free_data;
+    Free_Func free_data;
 
     // a pointer to a function that  gets a pointer of generic data type and returns a newly allocated copy of it
     // returns a generic pointer.
-    /*<fill_type>*/ copy_func;
+    Copy copy_func;
 
     //  a pointer to function that gets a pointer of generic data type and returns:
     //      - true if it's the last state.
     //      - false otherwise.
-    /*<fill_type>*/ is_last;
+    Last is_last;
 } MarkovChain;
 
 /**

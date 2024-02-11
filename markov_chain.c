@@ -1,3 +1,5 @@
-//
-// Created by hp on 2/10/2024.
-//
+#include "markov_chain.h"
+
+Node* get_node_from_database(MarkovChain *markov_chain, void *data_ptr){
+
+}

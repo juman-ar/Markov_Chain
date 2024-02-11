@@ -50,23 +50,89 @@ Node* add_to_database(MarkovChain *markov_chain, void *data_ptr){
   return data_node;
 }
 
-int find_next_node_counter(MarkovNode *first_node, MarkovNode
-*second_node){
+NextNodeCounter *find_next_node_counter(MarkovNode *first_node, MarkovNode
+*second_node, MarkovChain *markov_chain){
+  NextNodeCounter *ind_counter= first_node->next_node_counter;
+  while(NULL != ind_counter){
+    if (markov_chain->comp_func(ind_counter->markov_node->data,
+                                second_node->data)){
+      return ind_counter;
+    }
+    ind_counter+=1;
+  }
+  return NULL;
+}
 
+int counter_length(MarkovNode* markov_node){
+  int count=0;
+  NextNodeCounter *ind= markov_node->next_node_counter;
+  while(ind!=NULL){
+    count+=1;
+    ind+=1;
+  }
+  return count;
 }
 
 bool add_node_to_counter_list(MarkovNode *first_node, MarkovNode
 *second_node, MarkovChain *markov_chain){
-  if(first_node->next_node_counter==NULL){
-    NextNodeCounter *new_counter= calloc (1, sizeof (NextNodeCounter));
-    if(new_counter==NULL){
+  if (first_node->next_node_counter == NULL){
+    NextNodeCounter *new_counter = calloc (1, sizeof (NextNodeCounter));
+    if (new_counter == NULL)
+    {
       printf (ALLOCATION_ERROR_MASSAGE);
       return false;
     }
-    new_counter->markov_node= second_node;
-    new_counter->count=1;
-    first_node->next_node_counter=new_counter;
+    new_counter->markov_node = second_node;
+    new_counter->count = 1;
+    first_node->next_node_counter = new_counter;
     return true;
   }
 
+  NextNodeCounter *next = find_next_node_counter (first_node,second_node,
+                                                  markov_chain);
+  if (next==NULL){
+    int len= counter_length (first_node);
+    NextNodeCounter *new_count= realloc (first_node->next_node_counter,
+      sizeof(NextNodeCounter)*(len+1));
+    if (new_count==NULL){
+      printf (ALLOCATION_ERROR_MASSAGE);
+      return false;
+    }
+    first_node->next_node_counter= new_count;
+    first_node->next_node_counter[len].markov_node=second_node;
+    first_node->next_node_counter[len].count=1;
+    return true;
+  }
+
+  next->count+=1;
+  return true;
 }
+
+void free_markov_chain(MarkovChain **markov_chain){
+  if(markov_chain == NULL || *markov_chain == NULL){
+    return;
+  }
+  MarkovChain *markov_chain_ptr = *markov_chain;
+  LinkedList *database = markov_chain_ptr->database;
+  Node *current = database->first, *temp;
+
+  while(current != NULL) {
+    MarkovNode *markov_node = (MarkovNode *)current->data;
+    if(markov_node->data != NULL){
+      markov_chain_ptr->free_data(markov_node->data);
+    }
+
+   if(markov_node->next_node_counter != NULL){
+     free (markov_node->next_node_counter);
+   }
+    free(markov_node);
+    temp = current;
+    current = current->next;
+    free(temp);
+  }
+
+  free(database);
+  free(markov_chain);
+  *markov_chain = NULL;
+}
+

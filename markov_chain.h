@@ -5,6 +5,7 @@
 #include <stdio.h>  // For printf(), sscanf()
 #include <stdlib.h> // For exit(), malloc()
 #include <stdbool.h> // for bool
+#include <string.h>
 
 #define ALLOCATION_ERROR_MASSAGE "Allocation failure: Failed to allocate new memory\n"
 
@@ -28,7 +29,6 @@ struct NextNodeCounter;
 typedef struct MarkovNode {
     void* data;
     struct NextNodeCounter * next_node_counter;
-    int next_node_num;
 } MarkovNode;
 
 typedef struct NextNodeCounter {

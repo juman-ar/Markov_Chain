@@ -20,13 +20,11 @@ MarkovNode *build_markov_node(void *data_ptr, MarkovChain*markov_chain){
     printf (ALLOCATION_ERROR_MASSAGE);
     return NULL;
   }
-  //TODO: check the data allocation and copying the data
-//  char* data= (char *)malloc (sizeof(data_ptr));
-//  if(data== NULL){
-//    printf (ALLOCATION_ERROR_MASSAGE);
-//    return NULL;
-//  }
   void *data=markov_chain->copy_func(data_ptr);
+  if(data== NULL){
+    printf (ALLOCATION_ERROR_MASSAGE);
+    return NULL;
+  }
   markov_node->data=data;
   markov_node->next_node_counter=NULL;
   return markov_node;

@@ -13,8 +13,8 @@
 /***************************/
 /*   insert typedefs here  */
 /***************************/
-typedef void(*Print)(void*);
-typedef int(*Compare)(void*,void*);
+typedef void (*Print)(void*);
+typedef int (*Compare)(void*,void*);
 typedef void (*Free_Func)(void *);
 typedef void* (*Copy)(void *);
 typedef bool (*Last)(void *);

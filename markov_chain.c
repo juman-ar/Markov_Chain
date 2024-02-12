@@ -189,3 +189,21 @@ MarkovNode* get_next_random_node(MarkovNode *state_struct_ptr){
   return curr_node_count->markov_node;
 }
 
+void generate_random_sequence(MarkovChain *markov_chain, MarkovNode *
+first_node, int max_length){
+  MarkovNode *curr_node= first_node;
+  if(curr_node==NULL){
+    curr_node= get_first_random_node (markov_chain);
+  }
+  for(int words_read=0; words_read<max_length;words_read++){
+    markov_chain->print_func(curr_node->data);
+    if(markov_chain->is_last(curr_node->data)|| words_read==max_length-1){
+      return;
+    }
+    curr_node= get_next_random_node (curr_node);
+    if(curr_node==NULL){
+      return;
+    }
+  }
+}
+

@@ -14,19 +14,19 @@ Node* get_node_from_database(MarkovChain *markov_chain, void *data_ptr){
   return NULL;
 }
 
-MarkovNode *build_markov_node(void *data_ptr){
+MarkovNode *build_markov_node(void *data_ptr, MarkovChain*markov_chain){
   MarkovNode *markov_node= calloc (1,sizeof (MarkovNode));
   if( markov_node==NULL){
     printf (ALLOCATION_ERROR_MASSAGE);
     return NULL;
   }
   //TODO: check the data allocation and copying the data
-  char* data= (char *)malloc (sizeof(data_ptr));
-  if(data== NULL){
-    printf (ALLOCATION_ERROR_MASSAGE);
-    return NULL;
-  }
-  strcpy(data, data_ptr);
+//  char* data= (char *)malloc (sizeof(data_ptr));
+//  if(data== NULL){
+//    printf (ALLOCATION_ERROR_MASSAGE);
+//    return NULL;
+//  }
+  void *data=markov_chain->copy_func(data_ptr);
   markov_node->data=data;
   markov_node->next_node_counter=NULL;
   return markov_node;
@@ -36,7 +36,7 @@ Node* add_to_database(MarkovChain *markov_chain, void *data_ptr){
   Node* data_node= get_node_from_database (markov_chain,data_ptr);
 
   if (data_node==NULL){
-    MarkovNode *markov_node= build_markov_node (data_ptr);
+    MarkovNode *markov_node= build_markov_node (data_ptr,markov_chain);
     if(markov_node !=NULL){
       if(!add (markov_chain->database,markov_node)){
         return markov_chain->database->last;

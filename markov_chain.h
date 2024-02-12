@@ -5,7 +5,7 @@
 #include <stdio.h>  // For printf(), sscanf()
 #include <stdlib.h> // For exit(), malloc()
 #include <stdbool.h> // for bool
-#include <string.h>
+//#include <string.h>
 
 #define ALLOCATION_ERROR_MASSAGE "Allocation failure: Failed to allocate new memory\n"
 

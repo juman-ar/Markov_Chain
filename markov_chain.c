@@ -136,3 +136,56 @@ void free_markov_chain(MarkovChain **markov_chain){
   *markov_chain = NULL;
 }
 
+int get_random_number(int max_num){
+  return rand()%max_num;
+}
+
+MarkovNode* get_first_random_node(MarkovChain *markov_chain)
+{
+  Node *cur_node = markov_chain->database->first;
+  while (NULL != cur_node){
+    int random_num = get_random_number (markov_chain->database->size);
+    for (int i = 0; i < random_num; i++){
+      cur_node = cur_node->next;
+    }
+    if (!markov_chain->is_last (cur_node->data->data)){
+      return cur_node->data;
+    }
+    else{
+      cur_node = markov_chain->database->first;
+    }
+  }
+  return cur_node->data;
+}
+
+int count_sum(MarkovNode* markov_node){
+  int sum=0;
+  NextNodeCounter *curr_count= markov_node->next_node_counter;
+  while (curr_count!=NULL){
+    sum+=curr_count->count;
+    curr_count+=1;
+  }
+  return sum;
+}
+MarkovNode* get_next_random_node(MarkovNode *state_struct_ptr){
+  int total_count = count_sum (state_struct_ptr);
+  if(total_count==0){
+    return NULL;
+  }
+  int random_num= get_random_number (total_count);
+  int curr_ind=-1;
+  NextNodeCounter *curr_node_count=state_struct_ptr->next_node_counter;
+  while(curr_ind < total_count){
+    curr_ind+=curr_node_count->count;
+
+    if(curr_ind >= random_num){
+      break;
+    }
+    curr_node_count++;
+    if(curr_node_count==NULL){
+      return NULL;
+    }
+  }
+  return curr_node_count->markov_node;
+}
+

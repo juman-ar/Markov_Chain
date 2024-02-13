@@ -13,6 +13,7 @@
 #define ARG_NUM 3
 #define ARG_ERROR "the number of arguments is not valid."
 #define BASE 10
+#define LAST_CELL_NUM 100
 /**
  * represents the transitions by ladders and snakes in the game
  * each tuple (x,y) represents a ladder from x to if x<y or a snake otherwise
@@ -146,10 +147,24 @@ static int fill_database(MarkovChain *markov_chain)
 }
 
 static bool is_last_cell(void *data){
+  Cell *cell_data= (Cell*)data;
+  if(cell_data->number == LAST_CELL_NUM){
+    return true;
+  }
   return false;
 }
 
 static void print_cell(void* data){
+  Cell * cell= (Cell*)data;
+  if(cell->ladder_to==EMPTY && cell->snake_to== EMPTY){
+    printf ("[%d] -> ",cell->number);
+  }
+  else if (cell->snake_to!= EMPTY){
+    printf ("[%d]-snake to %d -> ",cell->number,cell->snake_to);
+  }
+  else if (cell->snake_to!= EMPTY){
+    printf ("[%d]-snake to %d -> ",cell->number,cell->snake_to);
+  }
 
 }
 

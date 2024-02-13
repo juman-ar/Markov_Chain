@@ -1,7 +1,8 @@
 #include "markov_chain.h"
 #include <string.h>
 
-#define MAX_SENTENCE 20
+#define MAX_SENTENCE 100
+#define TWEET_MAX 20
 #define READ_ALL_FILE (-1)
 #define ARG1 4
 #define ARG2 5
@@ -80,6 +81,34 @@ static int fill_database(FILE*fp, int words_to_read, MarkovChain* markov_chain){
 }
 
 
+MarkovChain *make_database(FILE* tweets_file,int words_to_read){
+  MarkovChain *markov_chain= malloc (sizeof(MarkovChain));
+  if (markov_chain==NULL){
+    printf (ALLOCATION_ERROR_MASSAGE);
+    return NULL;
+  }
+  LinkedList *database= malloc (sizeof (LinkedList));
+  if (database==NULL){
+    printf (ALLOCATION_ERROR_MASSAGE);
+    return NULL;
+  }
+  markov_chain->database=database;
+  if(fill_database (tweets_file, words_to_read, markov_chain)){
+    free_markov_chain (&markov_chain);
+    markov_chain=NULL;
+    return NULL;
+  }
+  return markov_chain;
+}
+
+void print_tweets(MarkovChain* markov_chain, int tweets_num){
+  for(int i=0;i<tweets_num;i++){
+    printf ("Tweet %d: ", i+1);
+    generate_random_sequence (markov_chain,NULL,TWEET_MAX);
+    printf("\n");
+  }
+}
+
 int main(int argc, char * argv[]){
   if(argc!=ARG1 && argc!= ARG2){
     printf (ARG_ERROR);
@@ -97,8 +126,12 @@ int main(int argc, char * argv[]){
     return EXIT_FAILURE;
   }
 
-  MarkovChain *markov_chain;
+  MarkovChain *markov_chain= make_database (tweets_file,word_count);
   if(markov_chain==NULL){
     return EXIT_FAILURE;
   }
+  fclose (tweets_file);
+  print_tweets (markov_chain,tweet_num);
+  free_markov_chain (&markov_chain);
+  return EXIT_SUCCESS;
 }

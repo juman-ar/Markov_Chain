@@ -22,7 +22,6 @@ MarkovNode *build_markov_node(void *data_ptr, MarkovChain*markov_chain){
   }
   void *data=markov_chain->copy_func(data_ptr);
   if(data== NULL){
-    printf (ALLOCATION_ERROR_MASSAGE);
     return NULL;
   }
   markov_node->data=data;

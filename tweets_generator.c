@@ -10,40 +10,40 @@
 
 #define ARG_ERROR "the number of arguments is not valid."
 #define FILE_ERROR "failed to open the file."
-static bool is_closing_word(char *data){
-  int len= (int) strlen (data);
+static bool is_closing_word(void *data){
+  int len= (int) strlen ((char*)data);
   if(strcmp (&data[len-1],".")==0){
     return true;
   }
   return false;
 }
 
-static void print_str(char* data){
+static void print_str(void* data){
   if(is_closing_word (data)){
-    printf ("%s", data);
+    printf ("%s", (char*)data);
   }
   else{
-    printf ("%s ",data);
+    printf ("%s ",(char*)data);
   }
 }
 
-static int comp_str(char* data1, char* data2){
-  return strcmp (data1, data2);
+static int comp_str(void * data1, void * data2){
+  return strcmp ((char*)data1, (char*)data2);
 }
 
-static void free_str(char* data){
-  free (data);
+static void free_str(void * data){
+  free ((char*)data);
 
 }
 
-static char* copy_str(char* data){
-  char* dest= malloc (strlen (data));
+static void * copy_str(void * data){
+  char* dest= malloc (strlen ((char*)data));
   if(dest== NULL){
     printf (ALLOCATION_ERROR_MASSAGE);
     return NULL;
   }
-  strcpy (dest, data);
-  return dest;
+  strcpy (dest, (char*)data);
+  return (char*)dest;
 
 }
 
@@ -105,6 +105,11 @@ MarkovChain *make_database(FILE* tweets_file,int words_to_read){
     markov_chain=NULL;
     return NULL;
   }
+  markov_chain->print_func = print_str;
+  markov_chain->comp_func = comp_str;
+  markov_chain->free_data= free_str;
+  markov_chain->copy_func= copy_str;
+  markov_chain->is_last= is_closing_word;
   return markov_chain;
 }
 

@@ -37,13 +37,20 @@ static void free_str(char* data){
 }
 
 static char* copy_str(char* data){
+  char* dest= malloc (strlen (data));
+  if(dest== NULL){
+    printf (ALLOCATION_ERROR_MASSAGE);
+    return NULL;
+  }
+  strcpy (dest, data);
+  return dest;
 
 }
 
 static FILE *open_file(char* path){
   FILE *tweets_file= fopen (path,"r");
   if(tweets_file==NULL){
-    printf (FILE_ERROR);
+    printf (ALLOCATION_ERROR_MASSAGE);
     return NULL;
   }
   return tweets_file;

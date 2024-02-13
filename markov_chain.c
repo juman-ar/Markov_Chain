@@ -192,9 +192,11 @@ first_node, int max_length){
   if(curr_node==NULL){
     curr_node= get_first_random_node (markov_chain);
   }
-  for(int words_read=0; words_read<max_length;words_read++){
+
+  for(int data_read=0; data_read<max_length;data_read++){
+
     markov_chain->print_func(curr_node->data);
-    if(markov_chain->is_last(curr_node->data)|| words_read==max_length-1){
+    if(markov_chain->is_last(curr_node->data)|| data_read==max_length-1){
       return;
     }
     curr_node= get_next_random_node (curr_node);

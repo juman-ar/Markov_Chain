@@ -8,8 +8,8 @@
 #define ARG2 5
 #define BASE 10
 
-#define ARG_ERROR "the number of arguments is not valid."
-#define FILE_ERROR "failed to open the file."
+#define ARG_ERROR "USAGE: the number of arguments is not valid."
+#define FILE_ERROR "ERROR: failed to open the file."
 static bool is_closing_word(void *data){
   int len= (int) strlen ((char*)data);
   if(strcmp (&data[len-1],".")==0){
@@ -44,13 +44,12 @@ static void * copy_str(void * data){
   }
   strcpy (dest, (char*)data);
   return (char*)dest;
-
 }
 
 static FILE *open_file(char* path){
   FILE *tweets_file= fopen (path,"r");
   if(tweets_file==NULL){
-    printf (ALLOCATION_ERROR_MASSAGE);
+    printf (FILE_ERROR);
     return NULL;
   }
   return tweets_file;

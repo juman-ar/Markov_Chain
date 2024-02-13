@@ -10,6 +10,9 @@
 #define DICE_MAX 6
 #define NUM_OF_TRANSITIONS 20
 
+#define ARG_NUM 3
+#define ARG_ERROR "the number of arguments is not valid."
+#define BASE 10
 /**
  * represents the transitions by ladders and snakes in the game
  * each tuple (x,y) represents a ladder from x to if x<y or a snake otherwise
@@ -142,13 +145,58 @@ static int fill_database(MarkovChain *markov_chain)
     return EXIT_SUCCESS;
 }
 
+static bool is_last_cell(void *data){
+  return false;
+}
+
+static void print_cell(void* data){
+
+}
+
+static int comp_cells(void * data1, void * data2){
+}
+
+static void free_cell(void * data){
+
+}
+
+static void * copy_cell(void * data){
+  Cell* dest= malloc (sizeof (Cell));
+  if(dest== NULL){
+    printf (ALLOCATION_ERROR_MASSAGE);
+    return NULL;
+  }
+}
+
+
+MarkovChain* build_database(){
+
+}
+
+void print_paths(MarkovChain* markov_chain, int paths_num){
+MarkovNode * first_cell= markov_chain->database->first->data;
+for(int i=0; i<paths_num;i++){
+  printf ("Random Walk %d: ", i+1);
+  generate_random_sequence(markov_chain, first_cell,
+                           MAX_GENERATION_LENGTH);
+  }
+}
+
+
 /**
  * @param argc num of arguments
  * @param argv 1) Seed
  *             2) Number of sentences to generate
  * @return EXIT_SUCCESS or EXIT_FAILURE
  */
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
+  if(argc!= ARG_NUM){
+    printf (ARG_ERROR);
+    return EXIT_FAILURE;
+  }
+  unsigned int seed= strtol (argv[1], NULL, BASE);
+  int paths_num = (int) strtol (argv[2],NULL, BASE);
+  srand (seed);
+
 
 }

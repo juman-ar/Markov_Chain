@@ -11,7 +11,7 @@
 #define NUM_OF_TRANSITIONS 20
 
 #define ARG_NUM 3
-#define ARG_ERROR "the number of arguments is not valid."
+#define ARG_ERROR "USAGE: the number of arguments is not valid."
 #define BASE 10
 #define LAST_CELL_NUM 100
 /**
@@ -215,6 +215,10 @@ MarkovChain* build_database(){
     printf (ALLOCATION_ERROR_MASSAGE);
     return NULL;
   }
+  database->first=NULL;
+  database->last=NULL;
+  database->size=0;
+
   markov_chain->database=database;
   markov_chain->print_func = print_cell;
   markov_chain->comp_func = comp_cells;
@@ -222,14 +226,13 @@ MarkovChain* build_database(){
   markov_chain->copy_func= copy_cell;
   markov_chain->is_last= is_last_cell;
 
-  if(fill_database (markov_chain)){
+  int success = fill_database (markov_chain);
+  if(success== EXIT_FAILURE){
     free_markov_chain (&markov_chain);
     markov_chain=NULL;
     return NULL;
   }
-
   return markov_chain;
-
 }
 
 void print_paths(MarkovChain* markov_chain, int paths_num){
@@ -238,6 +241,7 @@ for(int i=0; i<paths_num;i++){
   printf ("Random Walk %d: ", i+1);
   generate_random_sequence(markov_chain, first_cell,
                            MAX_GENERATION_LENGTH);
+  printf ("\n");
   }
 }
 
@@ -252,6 +256,7 @@ int main(int argc, char *argv[]){
     printf (ARG_ERROR);
     return EXIT_FAILURE;
   }
+
   unsigned int seed= strtol (argv[1], NULL, BASE);
   int paths_num = (int) strtol (argv[2],NULL, BASE);
   srand (seed);

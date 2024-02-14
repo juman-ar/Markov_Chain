@@ -99,16 +99,17 @@ MarkovChain *make_database(FILE* tweets_file,int words_to_read){
     return NULL;
   }
   markov_chain->database=database;
-  if(fill_database (tweets_file, words_to_read, markov_chain)){
-    free_markov_chain (&markov_chain);
-    markov_chain=NULL;
-    return NULL;
-  }
   markov_chain->print_func = print_str;
   markov_chain->comp_func = comp_str;
   markov_chain->free_data= free_str;
   markov_chain->copy_func= copy_str;
   markov_chain->is_last= is_closing_word;
+
+  if(fill_database (tweets_file, words_to_read, markov_chain)){
+    free_markov_chain (&markov_chain);
+    markov_chain=NULL;
+    return NULL;
+  }
   return markov_chain;
 }
 

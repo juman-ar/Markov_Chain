@@ -1,7 +1,7 @@
 #include "markov_chain.h"
 
 Node* get_node_from_database(MarkovChain *markov_chain, void *data_ptr){
-  if (markov_chain==NULL){
+  if (markov_chain==NULL || markov_chain->database==NULL){
     return NULL;
   }
   Node *ind_ptr= markov_chain->database->first;
@@ -22,6 +22,7 @@ MarkovNode *build_markov_node(void *data_ptr, MarkovChain*markov_chain){
   }
   void *data=markov_chain->copy_func(data_ptr);
   if(data== NULL){
+    free (markov_node);
     return NULL;
   }
   markov_node->data=data;
@@ -52,7 +53,7 @@ NextNodeCounter *find_next_node_counter(MarkovNode *first_node, MarkovNode
   NextNodeCounter *ind_counter= first_node->next_node_counter;
   while(NULL != ind_counter){
     if (markov_chain->comp_func(ind_counter->markov_node->data,
-                                second_node->data)){
+                                second_node->data)==0){
       return ind_counter;
     }
     ind_counter+=1;
@@ -72,6 +73,10 @@ int counter_length(MarkovNode* markov_node){
 
 bool add_node_to_counter_list(MarkovNode *first_node, MarkovNode
 *second_node, MarkovChain *markov_chain){
+  if(first_node->data==NULL|| second_node->data==NULL){
+    return false;
+  }
+
   if (first_node->next_node_counter == NULL){
     NextNodeCounter *new_counter = calloc (1, sizeof (NextNodeCounter));
     if (new_counter == NULL)
@@ -89,13 +94,13 @@ bool add_node_to_counter_list(MarkovNode *first_node, MarkovNode
                                                   markov_chain);
   if (next==NULL){
     int len= counter_length (first_node);
-    NextNodeCounter *new_count= realloc (first_node->next_node_counter,
+    NextNodeCounter *new_count_list= realloc (first_node->next_node_counter,
       sizeof(NextNodeCounter)*(len+1));
-    if (new_count==NULL){
+    if (new_count_list==NULL){
       printf (ALLOCATION_ERROR_MASSAGE);
       return false;
     }
-    first_node->next_node_counter= new_count;
+    first_node->next_node_counter= new_count_list;
     first_node->next_node_counter[len].markov_node=second_node;
     first_node->next_node_counter[len].count=1;
     return true;
@@ -111,27 +116,33 @@ void free_markov_chain(MarkovChain **markov_chain){
   }
   MarkovChain *markov_chain_ptr = *markov_chain;
   LinkedList *database = markov_chain_ptr->database;
-  Node *current = database->first, *temp;
+  if(database==NULL){
+    free (markov_chain_ptr);
+    return;
+  }
+  Node *current = database->first;
+  Node *temp=NULL;
 
   while(current != NULL) {
     MarkovNode *markov_node = (MarkovNode *)current->data;
     if(markov_node->data != NULL){
       markov_chain_ptr->free_data(markov_node->data);
     }
-
    if(markov_node->next_node_counter != NULL){
      free (markov_node->next_node_counter);
    }
+
     free(markov_node);
     temp = current;
     current = current->next;
     free(temp);
+    temp =NULL;
   }
-
   free(database);
-  free(markov_chain);
+  free(*markov_chain);
   *markov_chain = NULL;
 }
+
 
 int get_random_number(int max_num){
   return rand()%max_num;
@@ -155,6 +166,7 @@ MarkovNode* get_first_random_node(MarkovChain *markov_chain)
   return cur_node->data;
 }
 
+
 int count_sum(MarkovNode* markov_node){
   int sum=0;
   NextNodeCounter *curr_count= markov_node->next_node_counter;
@@ -164,11 +176,13 @@ int count_sum(MarkovNode* markov_node){
   }
   return sum;
 }
+
 MarkovNode* get_next_random_node(MarkovNode *state_struct_ptr){
   int total_count = count_sum (state_struct_ptr);
   if(total_count==0){
     return NULL;
   }
+
   int random_num= get_random_number (total_count);
   int curr_ind=-1;
   NextNodeCounter *curr_node_count=state_struct_ptr->next_node_counter;
@@ -186,14 +200,16 @@ MarkovNode* get_next_random_node(MarkovNode *state_struct_ptr){
   return curr_node_count->markov_node;
 }
 
+
 void generate_random_sequence(MarkovChain *markov_chain, MarkovNode *
 first_node, int max_length){
+
   MarkovNode *curr_node= first_node;
   if(curr_node==NULL){
     curr_node= get_first_random_node (markov_chain);
   }
 
-  for(int data_read=0; data_read<max_length;data_read++){
+  for(int data_read=0; data_read < max_length; data_read++){
 
     markov_chain->print_func(curr_node->data);
     if(markov_chain->is_last(curr_node->data)|| data_read==max_length-1){

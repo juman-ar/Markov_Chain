@@ -3,7 +3,7 @@
 
 #define MAX(X, Y) (((X) < (Y)) ? (Y) : (X))
 
-#define EMPTY -1
+#define EMPTY (-1)
 #define BOARD_SIZE 100
 #define MAX_GENERATION_LENGTH 60
 
@@ -156,35 +156,79 @@ static bool is_last_cell(void *data){
 
 static void print_cell(void* data){
   Cell * cell= (Cell*)data;
+  if (cell->number== LAST_CELL_NUM){
+    printf ("[%d]",cell->number);
+    return;
+  }
   if(cell->ladder_to==EMPTY && cell->snake_to== EMPTY){
     printf ("[%d] -> ",cell->number);
   }
   else if (cell->snake_to!= EMPTY){
     printf ("[%d]-snake to %d -> ",cell->number,cell->snake_to);
   }
-  else if (cell->snake_to!= EMPTY){
+  else if (cell->ladder_to!= EMPTY){
     printf ("[%d]-snake to %d -> ",cell->number,cell->snake_to);
   }
-
 }
 
 static int comp_cells(void * data1, void * data2){
+  Cell *first_cell= (Cell*)data1;
+  Cell* second_cell= (Cell*)data2;
+  if(first_cell->number > second_cell->number){
+    return 1;
+  }
+  else if(first_cell->number == second_cell->number){
+    return 0;
+  }
+  else if(first_cell->number < second_cell->number){
+    return -1;
+  }
+  return 0;
 }
 
 static void free_cell(void * data){
-
+  Cell *cell= (Cell *)data;
+  free (cell);
 }
 
 static void * copy_cell(void * data){
+  Cell *srs= (Cell*)data;
   Cell* dest= malloc (sizeof (Cell));
   if(dest== NULL){
     printf (ALLOCATION_ERROR_MASSAGE);
     return NULL;
   }
+  dest->number= srs->number;
+  dest->snake_to=srs->snake_to;
+  dest->ladder_to=srs->ladder_to;
+  return dest;
 }
 
-
 MarkovChain* build_database(){
+  MarkovChain *markov_chain= malloc (sizeof(MarkovChain));
+  if (markov_chain==NULL){
+    printf (ALLOCATION_ERROR_MASSAGE);
+    return NULL;
+  }
+  LinkedList *database= malloc (sizeof (LinkedList));
+  if (database==NULL){
+    printf (ALLOCATION_ERROR_MASSAGE);
+    return NULL;
+  }
+  markov_chain->database=database;
+  markov_chain->print_func = print_cell;
+  markov_chain->comp_func = comp_cells;
+  markov_chain->free_data= free_cell;
+  markov_chain->copy_func= copy_cell;
+  markov_chain->is_last= is_last_cell;
+
+  if(fill_database (markov_chain)){
+    free_markov_chain (&markov_chain);
+    markov_chain=NULL;
+    return NULL;
+  }
+
+  return markov_chain;
 
 }
 
@@ -196,7 +240,6 @@ for(int i=0; i<paths_num;i++){
                            MAX_GENERATION_LENGTH);
   }
 }
-
 
 /**
  * @param argc num of arguments
@@ -213,5 +256,11 @@ int main(int argc, char *argv[]){
   int paths_num = (int) strtol (argv[2],NULL, BASE);
   srand (seed);
 
-
+  MarkovChain *markov_chain= build_database ();
+  if(markov_chain==NULL){
+    return EXIT_FAILURE;
+  }
+  print_paths (markov_chain,paths_num);
+  free_markov_chain (&markov_chain);
+  return EXIT_SUCCESS;
 }

@@ -1,18 +1,20 @@
 #include "markov_chain.h"
 #include <string.h>
 
-#define MAX_SENTENCE 100
+#define MAX_SENTENCE 1000
 #define TWEET_MAX 20
 #define READ_ALL_FILE (-1)
 #define ARG1 4
 #define ARG2 5
 #define BASE 10
 
-#define ARG_ERROR "USAGE: the number of arguments is not valid."
-#define FILE_ERROR "ERROR: failed to open the file."
+#define ARG_ERROR "USAGE: the number of arguments is not valid.\n"
+#define FILE_ERROR "ERROR: failed to open the file.\n"
+
 static bool is_closing_word(void *data){
-  int len= (int) strlen ((char*)data);
-  if(strcmp (&data[len-1],".")==0){
+  char* data_str= (char *)data;
+  int len= (int) strlen ((char*)data_str);
+  if(strcmp (&data_str[len-1],".")==0){
     return true;
   }
   return false;
@@ -54,12 +56,14 @@ static FILE *open_file(char* path){
   }
   return tweets_file;
 }
+
 static int fill_database(FILE*fp, int words_to_read, MarkovChain* markov_chain){
   char line[MAX_SENTENCE];
   int words_read=0;
   char* word_ptr= NULL;
+
   while(fgets (line,MAX_SENTENCE,fp)&&
-      (words_to_read= READ_ALL_FILE || words_to_read > words_read)&&
+      ( words_read< words_to_read || words_to_read == READ_ALL_FILE)&&
       (word_ptr= strtok (line,"  \n\r"))){
 
     Node *current_node= add_to_database (markov_chain,word_ptr);
@@ -73,7 +77,9 @@ static int fill_database(FILE*fp, int words_to_read, MarkovChain* markov_chain){
       if(node==NULL){
         return EXIT_FAILURE;
       }
-      if(!markov_chain->is_last(current_node->data->data)){
+      if(current_node!= NULL &&
+      !markov_chain->is_last(current_node->data->data)){
+
         if(!add_node_to_counter_list (current_node->data,
                                       node->data,markov_chain)){
           return EXIT_FAILURE;
@@ -88,7 +94,7 @@ static int fill_database(FILE*fp, int words_to_read, MarkovChain* markov_chain){
 
 
 MarkovChain *make_database(FILE* tweets_file,int words_to_read){
-  MarkovChain *markov_chain= malloc (sizeof(MarkovChain));
+  MarkovChain *markov_chain= calloc (1,sizeof(MarkovChain));
   if (markov_chain==NULL){
     printf (ALLOCATION_ERROR_MASSAGE);
     return NULL;
@@ -98,6 +104,10 @@ MarkovChain *make_database(FILE* tweets_file,int words_to_read){
     printf (ALLOCATION_ERROR_MASSAGE);
     return NULL;
   }
+  database->first=NULL;
+  database->last=NULL;
+  database->size=0;
+
   markov_chain->database=database;
   markov_chain->print_func = print_str;
   markov_chain->comp_func = comp_str;
@@ -105,7 +115,8 @@ MarkovChain *make_database(FILE* tweets_file,int words_to_read){
   markov_chain->copy_func= copy_str;
   markov_chain->is_last= is_closing_word;
 
-  if(fill_database (tweets_file, words_to_read, markov_chain)){
+  int success= fill_database (tweets_file, words_to_read, markov_chain);
+  if(success== EXIT_FAILURE){
     free_markov_chain (&markov_chain);
     markov_chain=NULL;
     return NULL;
@@ -128,11 +139,12 @@ int main(int argc, char * argv[]){
   }
   unsigned int seed= strtol (argv[1], NULL, BASE);
   int tweet_num = (int) strtol (argv[2],NULL, BASE);
-  int word_count=-1;
+  int word_count=READ_ALL_FILE;
   if(argc==ARG2){
     word_count= (int) strtol (argv[4], NULL, BASE);
   }
   srand (seed);
+
   FILE *tweets_file= open_file (argv[3]);
   if(tweets_file==NULL){
     return EXIT_FAILURE;
@@ -142,8 +154,8 @@ int main(int argc, char * argv[]){
   if(markov_chain==NULL){
     return EXIT_FAILURE;
   }
-  fclose (tweets_file);
   print_tweets (markov_chain,tweet_num);
+  fclose (tweets_file);
   free_markov_chain (&markov_chain);
   return EXIT_SUCCESS;
 }

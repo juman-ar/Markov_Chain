@@ -5,7 +5,6 @@
 #include <stdio.h>  // For printf(), sscanf()
 #include <stdlib.h> // For exit(), malloc()
 #include <stdbool.h> // for bool
-//#include <string.h>
 
 #define ALLOCATION_ERROR_MASSAGE "Allocation failure: Failed to allocate memory\n"
 
@@ -52,7 +51,8 @@ typedef struct MarkovChain {
     //          - 0 if equal
     Compare comp_func;
 
-    // a pointer to a function that gets a pointer of generic data type and frees it.
+    // a pointer to a function that gets a pointer of generic data type
+    // and frees it.
     // returns void.
     Free_Func free_data;
 
@@ -61,11 +61,23 @@ typedef struct MarkovChain {
     // returns a generic pointer.
     Copy copy_func;
 
-    //  a pointer to function that gets a pointer of generic data type and returns:
+    //  a pointer to function that gets a pointer of generic data type
+    //  and returns:
     //      - true if it's the last state.
     //      - false otherwise.
     Last is_last;
 } MarkovChain;
+
+
+/**
+ * allocates memory to build a new markov node and initialize it's fields.
+ * @param data_ptr- a pointer to the data.
+ * @param markov_chain
+ * @return- a markov node, or NULL if memory allocation failed.
+ */
+MarkovNode *build_markov_node(void *data_ptr, MarkovChain*markov_chain);
+
+
 
 /**
  * Get one random state from the given markov_chain's database.
@@ -73,6 +85,7 @@ typedef struct MarkovChain {
  * @return
  */
 MarkovNode* get_first_random_node(MarkovChain *markov_chain);
+
 
 /**
  * Choose randomly the next state, depend on it's occurrence frequency.
@@ -85,7 +98,8 @@ MarkovNode* get_next_random_node(MarkovNode *state_struct_ptr);
  * Receive markov_chain, generate and print random sentence out of it. The
  * sentence most have at least 2 words in it.
  * @param markov_chain
- * @param first_node markov_node to start with, if NULL- choose a random markov_node
+ * @param first_node markov_node to start with, if NULL- choose a random
+ * markov_node
  * @param  max_length maximum length of chain to generate
  */
 void generate_random_sequence(MarkovChain *markov_chain, MarkovNode *
@@ -96,6 +110,19 @@ first_node, int max_length);
  * @param markov_chain markov_chain to free
  */
 void free_markov_chain(MarkovChain **markov_chain);
+
+
+/**
+* Check if second node is in counter list of the first node
+ * @param markov_chain the chain to look in its database
+ * @param first_node
+ * @param second_node
+ * @return Pointer to the NextNodeCounter of the second node if it is in the
+ * counter list, NULL otherwise
+ */
+NextNodeCounter *find_next_node_counter(MarkovNode *first_node, MarkovNode
+*second_node, MarkovChain *markov_chain);
+
 
 /**
  * Add the second markov_node to the counter list of the first markov_node.
@@ -110,7 +137,8 @@ bool add_node_to_counter_list(MarkovNode *first_node, MarkovNode
 *second_node, MarkovChain *markov_chain);
 
 /**
-* Check if data_ptr is in database. If so, return the markov_node wrapping it in
+* Check if data_ptr is in database. If so, return the markov_node
+ * wrapping it in
  * the markov_chain, otherwise return NULL.
  * @param markov_chain the chain to look in its database
  * @param data_ptr the state to look for

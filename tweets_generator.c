@@ -103,6 +103,7 @@ MarkovChain *make_database(FILE* tweets_file,int words_to_read){
   LinkedList *database= malloc (sizeof (LinkedList));
   if (database==NULL){
     printf (ALLOCATION_ERROR_MASSAGE);
+    free (markov_chain);
     return NULL;
   }
   database->first=NULL;

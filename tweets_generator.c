@@ -14,7 +14,7 @@
 static bool is_closing_word(void *data){
   char* data_str= (char *)data;
   int len= (int) strlen ((char*)data_str);
-  if(strcmp (&data_str[len-1],".")==0){
+  if(data_str[len-1]=="."){
     return true;
   }
   return false;

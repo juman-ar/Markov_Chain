@@ -45,7 +45,8 @@ typedef struct MarkovChain {
     // returns void.
     Print print_func;
 
-    // pointer to a func that gets 2 pointers of generic data type(same one) and compare between them */
+    // pointer to a func that gets 2 pointers of generic data type(same one)
+    // and compare between them */
     // returns: - a positive value if the first is bigger
     //          - a negative value if the second is bigger
     //          - 0 if equal
@@ -55,7 +56,8 @@ typedef struct MarkovChain {
     // returns void.
     Free_Func free_data;
 
-    // a pointer to a function that  gets a pointer of generic data type and returns a newly allocated copy of it
+    // a pointer to a function that  gets a pointer of generic data type and
+    // returns a newly allocated copy of it
     // returns a generic pointer.
     Copy copy_func;
 

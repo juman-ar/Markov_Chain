@@ -57,7 +57,8 @@ static FILE *open_file(char* path){
   return tweets_file;
 }
 
-static int fill_database(FILE*fp, int words_to_read, MarkovChain* markov_chain){
+static int fill_database(FILE*fp, int words_to_read,
+                         MarkovChain* markov_chain){
   char line[MAX_SENTENCE];
   int words_read=0;
   char* word_ptr= NULL;

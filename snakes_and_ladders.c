@@ -169,7 +169,7 @@ static void print_cell(void* data){
     printf ("[%d]-snake to %d -> ",cell->number,cell->snake_to);
   }
   else if (cell->ladder_to!= EMPTY){
-    printf ("[%d]-snake to %d -> ",cell->number,cell->snake_to);
+    printf ("[%d]-ladder to %d -> ",cell->number,cell->ladder_to);
   }
 }
 

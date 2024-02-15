@@ -217,7 +217,7 @@ MarkovNode* get_next_random_node(MarkovNode *state_struct_ptr) {
   int sum = 0;
   for(int i = 0; i < state_struct_ptr->counter_list_length; i++) {
     sum += state_struct_ptr->next_node_counter[i].count;
-    if(sum >= random_num) {
+    if(sum > random_num) {
       return state_struct_ptr->next_node_counter[i].markov_node;
     }
   }

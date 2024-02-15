@@ -29,6 +29,7 @@ struct NextNodeCounter;
 typedef struct MarkovNode {
     void* data;
     struct NextNodeCounter * next_node_counter;
+    int counter_list_length;
 } MarkovNode;
 
 typedef struct NextNodeCounter {

@@ -7,7 +7,7 @@
 #include <stdbool.h> // for bool
 //#include <string.h>
 
-#define ALLOCATION_ERROR_MASSAGE "Allocation failure: Failed to allocate new memory\n"
+#define ALLOCATION_ERROR_MASSAGE"Allocation failure: Failed to allocate new memory\n"
 
 
 /***************************/

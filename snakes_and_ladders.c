@@ -148,6 +148,12 @@ static int fill_database(MarkovChain *markov_chain)
     return EXIT_SUCCESS;
 }
 
+
+/**
+ * checks if the cell is the last cell.
+ * @param data- a void pointer to the data
+ * @return true-if the cell is last, false- else
+ */
 static bool is_last_cell(void *data){
   Cell *cell_data= (Cell*)data;
   if(cell_data->number == LAST_CELL_NUM){
@@ -156,6 +162,12 @@ static bool is_last_cell(void *data){
   return false;
 }
 
+
+/**
+ * prints the data in a specific form
+ * @param data- a void pointer to the data
+ * @return
+ */
 static void print_cell(void* data){
   Cell * cell= (Cell*)data;
   if (cell->number== LAST_CELL_NUM){
@@ -173,6 +185,16 @@ static void print_cell(void* data){
   }
 }
 
+
+
+/**
+ * compares two pieces of data with the same type
+ * @param data1- a void pointer to the first piece of data.
+ * @param data2- a void pointer to the second piece of data.
+ * @return- 0 if the data are equal, a negative number if the first is
+ * smaller than the second, a positive number  if the first is bigger than
+ * the second
+ */
 static int comp_cells(void * data1, void * data2){
   Cell *first_cell= (Cell*)data1;
   Cell* second_cell= (Cell*)data2;
@@ -188,11 +210,23 @@ static int comp_cells(void * data1, void * data2){
   return 0;
 }
 
+
+/**
+ * Free data from memory
+ * @param data- a pointer to the data to free
+ * @return
+ */
 static void free_cell(void * data){
   Cell *cell= (Cell *)data;
   free (cell);
 }
 
+
+/**
+ * allocates memory for new data and copy the content of data to it
+ * @param data- data to copy
+ * @return a pointer to the copied data, or NULL if memory allocation failed
+ */
 static void * copy_cell(void * data){
   Cell *srs= (Cell*)data;
   Cell* dest= malloc (sizeof (Cell));
@@ -206,6 +240,11 @@ static void * copy_cell(void * data){
   return dest;
 }
 
+
+/**
+ * builds a new markov chain and fills it's database
+ * @return Markov Chain or NULL if memory allocation failed
+ */
 MarkovChain* build_database(){
   MarkovChain *markov_chain= malloc (sizeof(MarkovChain));
   if (markov_chain==NULL){
@@ -237,6 +276,13 @@ MarkovChain* build_database(){
   return markov_chain;
 }
 
+
+/**
+ * prints random generated paths
+ * @param markov_chain
+ * @param tweets_num the number  of tweets to print.
+ * @return EXIT_SUCCESS or EXIT_FAILURE
+ */
 void print_paths(MarkovChain* markov_chain, int paths_num){
 MarkovNode * first_cell= markov_chain->database->first->data;
 for(int i=0; i<paths_num;i++){

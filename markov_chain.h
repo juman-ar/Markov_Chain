@@ -70,6 +70,14 @@ typedef struct MarkovChain {
 
 
 /**
+ * Get a random number
+ * @param markov_chain
+ * @return a random number
+ */
+int get_random_number(int max_num);
+
+
+/**
  * allocates memory to build a new markov node and initialize it's fields.
  * @param data_ptr- a pointer to the data.
  * @param markov_chain
@@ -77,6 +85,13 @@ typedef struct MarkovChain {
  */
 MarkovNode *build_markov_node(void *data_ptr, MarkovChain*markov_chain);
 
+
+/**
+ * calculates the sum of all the counts in the markov node count list.
+ * @param markov_node
+ * @return the sum of the counts.
+ */
+int count_sum(MarkovNode* markov_node);
 
 
 /**

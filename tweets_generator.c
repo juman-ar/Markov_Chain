@@ -11,6 +11,12 @@
 #define ARG_ERROR "USAGE: the number of arguments is not valid.\n"
 #define FILE_ERROR "ERROR: failed to open the file.\n"
 
+
+/**
+ * checks if the word data is last
+ * @param data- a void pointer to the data
+ * @return true-if the word is last, false- else
+ */
 static bool is_closing_word(void *data){
   char* data_str= (char *)data;
   int len= (int) strlen ((char*)data_str);
@@ -20,6 +26,12 @@ static bool is_closing_word(void *data){
   return false;
 }
 
+
+/**
+ * prints the data in a specific form
+ * @param data- a void pointer to the data
+ * @return
+ */
 static void print_str(void* data){
   if(is_closing_word (data)){
     printf ("%s", (char*)data);
@@ -29,15 +41,36 @@ static void print_str(void* data){
   }
 }
 
+
+/**
+ * compares two pieces of data with the same type
+ * @param data1- a void pointer to the first piece of data.
+ * @param data2- a void pointer to the second piece of data.
+ * @return- 0 if the data are equal, a negative number if the first is
+ * smaller than the second, a positive number  if the first is bigger than
+ * the second
+ */
 static int comp_str(void * data1, void * data2){
   return strcmp ((char*)data1, (char*)data2);
 }
 
+
+/**
+ * Free data from memory
+ * @param data- a pointer to the data to free
+ * @return
+ */
 static void free_str(void * data){
   free ((char*)data);
 
 }
 
+
+/**
+ * allocates memory for new data and copy the content of data to it
+ * @param data- data to copy
+ * @return a pointer to the copied data, or NULL if memory allocation failed
+ */
 static void * copy_str(void * data){
   char* dest= malloc (strlen ((char*)data)+1);
   if(dest== NULL){
@@ -48,6 +81,12 @@ static void * copy_str(void * data){
   return (char*)dest;
 }
 
+
+/**
+ * opens a file in read mode
+ * @param path- a path to the file
+ * @return a pointer to the file, or NULL if opening the file failed
+ */
 static FILE *open_file(char* path){
   FILE *tweets_file= fopen (path,"r");
   if(tweets_file==NULL){
@@ -57,6 +96,13 @@ static FILE *open_file(char* path){
   return tweets_file;
 }
 
+/**
+ * fills database
+ * @param markov_chain
+ * @param fp- a pointer to a file to read
+ * @param words_to_read- the number of words to read from the file.
+ * @return EXIT_SUCCESS or EXIT_FAILURE
+ */
 static int fill_database(FILE*fp, int words_to_read,
                          MarkovChain* markov_chain){
   char line[MAX_SENTENCE];
@@ -94,6 +140,13 @@ static int fill_database(FILE*fp, int words_to_read,
 }
 
 
+/**
+ * builds a new markov chain and fills it's database
+ * @param tweets_file- a pointer to the file that has the words to fill the
+ * database with.
+ * @param words_to_read the number of words to read from the file.
+ * @return Markov Chain or NULL if memory allocation failed
+ */
 MarkovChain *make_database(FILE* tweets_file,int words_to_read){
   MarkovChain *markov_chain= calloc (1,sizeof(MarkovChain));
   if (markov_chain==NULL){
@@ -126,6 +179,13 @@ MarkovChain *make_database(FILE* tweets_file,int words_to_read){
   return markov_chain;
 }
 
+
+/**
+ * prints random generated tweets
+ * @param markov_chain
+ * @param tweets_num the number  of tweets to print.
+ * @return EXIT_SUCCESS or EXIT_FAILURE
+ */
 void print_tweets(MarkovChain* markov_chain, int tweets_num){
   for(int i=0;i<tweets_num;i++){
     printf ("Tweet %d: ", i+1);
@@ -134,6 +194,15 @@ void print_tweets(MarkovChain* markov_chain, int tweets_num){
   }
 }
 
+
+/**
+ * @param argc num of arguments
+ * @param argv 1) Seed
+ *             2) Number of sentences to generate
+ *             3) a path to the file to read
+ *             4) (optional) number of words to read from the file.
+ * @return EXIT_SUCCESS or EXIT_FAILURE
+ */
 int main(int argc, char * argv[]){
   if(argc!=ARG1 && argc!= ARG2){
     printf (ARG_ERROR);

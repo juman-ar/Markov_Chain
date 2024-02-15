@@ -65,6 +65,8 @@ Node* add_to_database(MarkovChain *markov_chain, void *data_ptr){
 NextNodeCounter *find_next_node_counter(MarkovNode *first_node, MarkovNode
 *second_node, MarkovChain *markov_chain){
   NextNodeCounter *counter= first_node->next_node_counter;
+  //iterates over the counter list of the first node and searches for the
+  // second node in it.
   for(int ind=0; ind<first_node->counter_list_length;ind++){
     if (markov_chain->comp_func(counter[ind].markov_node->data,
                                 second_node->data)==0){
@@ -77,14 +79,16 @@ NextNodeCounter *find_next_node_counter(MarkovNode *first_node, MarkovNode
 
 bool add_node_to_counter_list(MarkovNode *first_node, MarkovNode
 *second_node, MarkovChain *markov_chain){
+  //makes sure that the nodes are not NULL
   if(first_node->data==NULL|| second_node->data==NULL){
     return false;
   }
 
+  //if the first node doesn't have a count list, it initializes one and adds
+  // the second node to it.
   if (first_node->next_node_counter == NULL){
     NextNodeCounter *new_counter = calloc (1, sizeof (NextNodeCounter));
-    if (new_counter == NULL)
-    {
+    if (new_counter == NULL){
       printf (ALLOCATION_ERROR_MASSAGE);
       return false;
     }
@@ -95,8 +99,11 @@ bool add_node_to_counter_list(MarkovNode *first_node, MarkovNode
     return true;
   }
 
+  //searches for the second node in the count list of the first one.
   NextNodeCounter *next = find_next_node_counter (first_node,second_node,
                                                   markov_chain);
+  //makes a new counter node that points to the second node and adds it to
+  // the count list
   if (next==NULL){
     int len= first_node->counter_list_length; //counter_length (first_node);
     NextNodeCounter *new_count_list= realloc (first_node->next_node_counter,
@@ -111,12 +118,14 @@ bool add_node_to_counter_list(MarkovNode *first_node, MarkovNode
     first_node->counter_list_length++;
     return true;
   }
-
+  //if the second node already has a count node in the count list, adds 1 to
+  // the count value.
   next->count+=1;
   return true;
 }
 
 void free_markov_chain(MarkovChain **markov_chain){
+  //makes sure the pointers are not NULL
   if(markov_chain == NULL || *markov_chain == NULL){
     return;
   }
@@ -129,6 +138,7 @@ void free_markov_chain(MarkovChain **markov_chain){
   Node *current = database->first;
   Node *temp=NULL;
 
+  //iterates over the database ande free every node and it's content.
   while(current != NULL) {
     MarkovNode *markov_node = (MarkovNode *)current->data;
     if(markov_node->data != NULL){
@@ -139,6 +149,7 @@ void free_markov_chain(MarkovChain **markov_chain){
    }
 
     free(markov_node);
+   //free the node and moves to the next.
     temp = current;
     current = current->next;
     free(temp);
@@ -154,17 +165,22 @@ int get_random_number(int max_num){
   return rand()%max_num;
 }
 
+
 MarkovNode* get_first_random_node(MarkovChain *markov_chain)
 {
   Node *cur_node = markov_chain->database->first;
   while (NULL != cur_node){
+    //gets a random number and get the node in that index
     int random_num = get_random_number (markov_chain->database->size);
     for (int i = 0; i < random_num; i++){
       cur_node = cur_node->next;
     }
+    //if the data is not considered last it returns it
     if (!markov_chain->is_last (cur_node->data->data)){
       return cur_node->data;
     }
+    //if the data is last we get a new random number and choose a new
+    // random node.
     else{
       cur_node = markov_chain->database->first;
     }
@@ -176,46 +192,26 @@ MarkovNode* get_first_random_node(MarkovChain *markov_chain)
 int count_sum(MarkovNode* markov_node){
   int sum=0;
   NextNodeCounter *counter= markov_node->next_node_counter;
-
   if(counter==NULL){
     return 0;
   }
- // while (curr_count!=NULL){
+
  for(int i=0; i< markov_node->counter_list_length;i++){
     sum+=counter[i].count;
   }
   return sum;
 }
 
-//MarkovNode* get_next_random_node(MarkovNode *state_struct_ptr){
-//  int total_count = count_sum (state_struct_ptr);
-//  if(total_count==0){
-//    return NULL;
-//  }
-//
-//  int random_num= get_random_number (total_count);
-//  int curr_ind=-1;
-//  NextNodeCounter *curr_node_count=state_struct_ptr->next_node_counter;
-//  while(curr_ind < total_count){
-//    curr_ind+=curr_node_count->count;
-//
-//    if(curr_ind >= random_num){
-//      break;
-//    }
-//    curr_node_count++;
-//    if(curr_node_count==NULL){
-//      return NULL;
-//    }
-//  }
-//  return curr_node_count->markov_node;
-//}
 
 MarkovNode* get_next_random_node(MarkovNode *state_struct_ptr) {
+  //get the total sum of the counts in the count list.
   int total_count = count_sum(state_struct_ptr);
   if(total_count == 0) {
     return NULL;
   }
 
+  //gets a random number and chooses a random node according to it while
+  // considering the count of the node
   int random_num = get_random_number(total_count);
   int sum = 0;
   for(int i = 0; i < state_struct_ptr->counter_list_length; i++) {

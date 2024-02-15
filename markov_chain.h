@@ -6,7 +6,7 @@
 #include <stdlib.h> // For exit(), malloc()
 #include <stdbool.h> // for bool
 
-#define ALLOCATION_ERROR_MASSAGE "Allocation failure: Failed to allocate memory\n"
+#define ALLOCATION_ERROR_MASSAGE "Allocation failure: Failed to allocate mem\n"
 
 
 /***************************/

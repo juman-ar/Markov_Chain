@@ -14,7 +14,7 @@
 static bool is_closing_word(void *data){
   char* data_str= (char *)data;
   int len= (int) strlen ((char*)data_str);
-  if(data_str[len-1]=="."){
+  if(strcmp(&data_str[len-1],".")==0){
     return true;
   }
   return false;
@@ -39,7 +39,7 @@ static void free_str(void * data){
 }
 
 static void * copy_str(void * data){
-  char* dest= malloc (strlen ((char*)data));
+  char* dest= malloc (strlen ((char*)data)+1);
   if(dest== NULL){
     printf (ALLOCATION_ERROR_MASSAGE);
     return NULL;

@@ -52,7 +52,7 @@ Node* add_to_database(MarkovChain *markov_chain, void *data_ptr){
         return markov_chain->database->last;
       }
       else{
-        free (markov_node->data);
+        markov_chain->free_data(markov_node->data);
         free (markov_node);
       }
     }

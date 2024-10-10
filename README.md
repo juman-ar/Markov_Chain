@@ -1,6 +1,6 @@
 # Markov Chain 
 
-This priject is a part of the C/C++ Programming Workshop at the Hebrew University of Jerusalem, focusing on generic programming, pointers, and memory management.
+This project is a part of the C/C++ Programming Workshop at the Hebrew University of Jerusalem, focusing on generic programming, pointers, and memory management.
 the purpose if this project is to implement a generic Markov chain structure that handles different types of data and implementing two specific programs that utilize this generic structure:
 1. Tweet Generator: Generates tweets using a Markov Chain.
 2. Snakes and Ladders: A game simulation using the Markov Chain to create random paths in the game.

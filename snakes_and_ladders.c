@@ -292,28 +292,28 @@ for(int i=0; i<paths_num;i++){
   printf ("\n");
   }
 }
-
-/**
- * @param argc num of arguments
- * @param argv 1) Seed
- *             2) Number of sentences to generate
- * @return EXIT_SUCCESS or EXIT_FAILURE
- */
-int main(int argc, char *argv[]){
-  if(argc!= ARG_NUM){
-    printf (ARG_ERROR);
-    return EXIT_FAILURE;
-  }
-
-  unsigned int seed= strtol (argv[1], NULL, BASE);
-  int paths_num = (int) strtol (argv[2],NULL, BASE);
-  srand (seed);
-
-  MarkovChain *markov_chain= build_database ();
-  if(markov_chain==NULL){
-    return EXIT_FAILURE;
-  }
-  print_paths (markov_chain,paths_num);
-  free_markov_chain (&markov_chain);
-  return EXIT_SUCCESS;
-}
+//
+// /**
+//  * @param argc num of arguments
+//  * @param argv 1) Seed
+//  *             2) Number of paths to generate
+//  * @return EXIT_SUCCESS or EXIT_FAILURE
+//  */
+// int main(int argc, char *argv[]){
+//   if(argc!= ARG_NUM){
+//     printf (ARG_ERROR);
+//     return EXIT_FAILURE;
+//   }
+//
+//   unsigned int seed= strtol (argv[1], NULL, BASE);
+//   int paths_num = (int) strtol (argv[2],NULL, BASE);
+//   srand (seed);
+//
+//   MarkovChain *markov_chain= build_database ();
+//   if(markov_chain==NULL){
+//     return EXIT_FAILURE;
+//   }
+//   print_paths (markov_chain,paths_num);
+//   free_markov_chain (&markov_chain);
+//   return EXIT_SUCCESS;
+// }

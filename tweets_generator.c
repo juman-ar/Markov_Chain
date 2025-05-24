@@ -89,12 +89,18 @@ static void * copy_str(void * data){
  */
 static FILE *open_file(char* path){
   FILE *tweets_file= fopen (path,"r");
+  // FILE *tweets_file= fopen ("justdoit_tweets.txt","r");
+
   if(tweets_file==NULL){
     printf (FILE_ERROR);
     return NULL;
   }
   return tweets_file;
 }
+
+
+
+
 
 /**
  * fills database
@@ -215,7 +221,6 @@ int main(int argc, char * argv[]){
     word_count= (int) strtol (argv[4], NULL, BASE);
   }
   srand (seed);
-
   FILE *tweets_file= open_file (argv[3]);
   if(tweets_file==NULL){
     return EXIT_FAILURE;
